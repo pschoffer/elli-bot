@@ -6,12 +6,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Elli Server</title>
     <script>
-        alert("I am alive")
     </script>
+
+
+    <style>
+        body,
+        html {
+            height: 100%;
+        }
+
+        body {
+            color: azure;
+            background: linear-gradient(180deg, rgba(2, 0, 36, 1) 0%, rgba(2, 0, 36, 1) 67%, rgba(200, 113, 10, 1) 100%);
+        }
+
+        p {
+            color: #b4afaf;
+        }
+
+        .container {
+            padding: 7rem;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between
+        }
+
+        .status {
+            border: 1px solid #b4afaf;
+            border-radius: 20px;
+            padding: 1rem;
+        }
+
+        .status-container {
+            display: flex;
+        }
+
+        .status-text {
+            margin: 0px;
+        }
+
+        .led {
+            margin: 1rem;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+
+        .led-yellow {
+            background-color: #FF0;
+            box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 9px, #FF0 0 2px 12px;
+            animation: blinkYellow 1s infinite;
+        }
+
+        @keyframes blinkYellow {
+            from {
+                background-color: #FF0;
+            }
+
+            50% {
+                background-color: #AA0;
+                box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 9px, #FF0 0 2px 0;
+            }
+
+            to {
+                background-color: #FF0;
+            }
+        }
+
+        .led-green {
+            background-color: #ABFF00;
+            box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 9px, #89FF00 0 2px 12px;
+
+        }
+    </style>
 </head>
 
 <body>
-    sup
+    <div class="container">
+        <div class="text">
+            <h1>Elli Server</h1>
+            <p>This is a simple server that listens on UDP connections, then allowes key inputs to be send.</p>
+        </div>
+        <div class="status">
+            <div class="status-container">
+                <h2>Status</h2>
+                <div class="led led-yellow"></div>
+            </div>
+            <p class="status-text">
+                Connecting ...
+            </p>
+        </div>
+    </div>
 </body>
 
 
