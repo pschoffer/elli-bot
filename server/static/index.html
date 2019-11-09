@@ -6,9 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Elli Server</title>
     <script>
+        const serverIP = "192.168.0.102"
+
+
+        function queryStatus() {
+            var http = new XMLHttpRequest();
+            http.onreadystatechange = () => {
+                if (http.readyState === XMLHttpRequest.DONE) {
+                    const response = JSON.parse(http.responseText)
+                    if (status === "OK") {
+                        alert("Heureka")
+                    } else {
+                        setTimeout(queryStatus, 1000)
+                    }
+                }
+            };
+            const endpoint = "http://" + serverIP + ":5000/status"
+            http.open("GET", endpoint, true);
+            http.send();
+        }
+
+        window.onload = () => {
+            queryStatus()
+        }
     </script>
-
-
     <style>
         body,
         html {
