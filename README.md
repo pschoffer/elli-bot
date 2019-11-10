@@ -16,7 +16,7 @@ In the top of the [index.html](./server/static/index.html) there is hardcoded IP
 
 ### Run
 
-To should do following to get the required packages (1) and start the server (2) after that the webserver is accassible on [127.0.0.1:5000](127.0.0.1:5000)
+To should do following to get the required packages (1) and start the server (2) after that the webserver is accassible on [127.0.0.1:5000](http://127.0.0.1:5000)
 
 ```bash
 cd server
