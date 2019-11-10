@@ -8,6 +8,10 @@
     <script>
         const serverIP = "192.168.0.102"
 
+        function getRequestEndpoint(type) {
+            return "http://" + serverIP + ":5000/" + type
+        }
+
         function queryStatus() {
             let http = new XMLHttpRequest();
             http.onreadystatechange = () => {
@@ -20,7 +24,7 @@
                     }
                 }
             };
-            const endpoint = "http://" + serverIP + ":5000/status"
+            const endpoint = getRequestEndpoint("status")
             http.open("GET", endpoint, true);
             http.send();
         }
@@ -38,9 +42,25 @@
             arrowsEl.style.display = "block";
         }
 
+        var elementIdToDirection = {
+            "up-arrow": "straight",
+            "down-arrow": "back",
+            "left-arrow": "left",
+            "right-arrow": "right"
+        }
+
         function sendInstruction() {
             if (window.currentArrow) {
-                console.log("Send " + window.currentArrow)
+                let direction = elementIdToDirection[window.currentArrow];
+                let data = JSON.stringify({
+                    "direction": direction
+                })
+                console.log("Sending instruction: " + data)
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", getRequestEndpoint("instruction"), true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(data);
                 setTimeout(sendInstruction, 2000)
             }
         }
