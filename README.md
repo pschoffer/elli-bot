@@ -23,3 +23,11 @@ cd server
 python setup.py install # (1)
 python app.py # (2)
 ```
+
+## Elli code
+
+This code should run on the raspberry PI on the bot.
+
+### Important value
+
+On top of the [main file](./elli/elli.py) there is a server IP address that should match the real address.
