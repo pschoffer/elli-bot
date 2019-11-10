@@ -38,6 +38,13 @@
             arrowsEl.style.display = "block";
         }
 
+        function sendInstruction() {
+            if (window.currentArrow) {
+                console.log("Send " + window.currentArrow)
+                setTimeout(sendInstruction, 2000)
+            }
+        }
+
         function getArrowId(event) {
             let arrowElement = event.target.id ? event.target : event.target.parentElement;
             return arrowElement.id;
@@ -46,6 +53,8 @@
         function onArrowDown(event) {
             let id = getArrowId(event);
             window.currentArrow = id;
+
+            sendInstruction();
 
             let arrowEl = document.getElementById(id);
             arrowEl.classList.remove("arrow-hover")
