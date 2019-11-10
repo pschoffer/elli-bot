@@ -9,7 +9,7 @@
         const serverIP = "192.168.0.102"
 
         function queryStatus() {
-            var http = new XMLHttpRequest();
+            let http = new XMLHttpRequest();
             http.onreadystatechange = () => {
                 if (http.readyState === XMLHttpRequest.DONE) {
                     const response = JSON.parse(http.responseText)
@@ -26,20 +26,73 @@
         }
 
         function connected(addr) {
-            var statusTextEl = document.getElementsByClassName("status-text")[0];
+            let statusTextEl = document.getElementsByClassName("status-text")[0];
             statusTextEl.innerHTML = "Connected! - " + addr;
             statusTextEl.style.fontWeight = "bold";
 
-            var ledEl = document.getElementsByClassName("led")[0];
+            let ledEl = document.getElementsByClassName("led")[0];
             ledEl.classList.remove('led-yellow');
             ledEl.classList.add('led-green');
 
-            var arrowsEl = document.getElementsByClassName("arrows-container")[0];
+            let arrowsEl = document.getElementsByClassName("arrows-container")[0];
             arrowsEl.style.display = "block";
+        }
+
+        function getArrowId(event) {
+            let arrowElement = event.target.id ? event.target : event.target.parentElement;
+            return arrowElement.id;
+        }
+
+        function onArrowDown(event) {
+            let id = getArrowId(event);
+            window.currentArrow = id;
+
+            let arrowEl = document.getElementById(id);
+            arrowEl.classList.remove("arrow-hover")
+            arrowEl.classList.add("arrow-pressed")
+        }
+
+        function onArrowUp(event) {
+            if (window.currentArrow) {
+                let arrowEl = document.getElementById(window.currentArrow);
+                arrowEl.classList.remove("arrow-pressed")
+                let releasedId = getArrowId(event)
+                if (releasedId) {
+                    let releasedArrowEl = document.getElementById(releasedId);
+                    releasedArrowEl.classList.add("arrow-hover");
+                }
+
+                window.currentArrow = undefined
+            }
+        }
+
+        function onArrowOver(event) {
+            if (!window.currentArrow) {
+                let id = getArrowId(event);
+                let arrowEl = document.getElementById(id);
+                arrowEl.classList.add("arrow-hover")
+            }
+        }
+
+        function onArrowOut(event) {
+            let id = getArrowId(event);
+            let arrowEl = document.getElementById(id);
+            arrowEl.classList.remove("arrow-hover")
+        }
+
+        function setArrowHooks() {
+            let arrowEls = document.getElementsByClassName("arrow-btn");
+            for (index = 0; index < arrowEls.length; index++) {
+                arrowEls[index].addEventListener("mousedown", onArrowDown);
+                arrowEls[index].addEventListener("mouseover", onArrowOver);
+                arrowEls[index].addEventListener("mouseout", onArrowOut);
+            }
+            document.addEventListener("mouseup", onArrowUp)
         }
 
         window.onload = () => {
             queryStatus()
+            setArrowHooks()
         }
     </script>
     <style>
@@ -120,7 +173,7 @@
             display: none;
         }
 
-        button.arrow {
+        .arrow-btn {
             border: 2px solid white;
             border-radius: 5px;
             background: inherit;
@@ -129,7 +182,15 @@
 
         button:hover {
             cursor: pointer;
+
+        }
+
+        .arrow-hover {
             background: rgba(255, 255, 255, 0.15);
+        }
+
+        .arrow-pressed {
+            background: rgba(255, 255, 255, 0.70);
         }
 
         div.arrow {
@@ -180,18 +241,18 @@
 
     <div class="arrows-container">
         <div class="row">
-            <button class="arrow">
+            <button id="up-arrow" class="arrow-btn">
                 <div class="arrow up"></div>
             </button>
         </div>
         <div class="row">
-            <button class="arrow">
+            <button id="left-arrow" class="arrow-btn">
                 <div class="arrow left"></div>
             </button>
-            <button class="arrow">
+            <button id="down-arrow" class="arrow-btn">
                 <div class="arrow down"></div>
             </button>
-            <button class="arrow">
+            <button id="right-arrow" class="arrow-btn">
                 <div class="arrow right"></div>
             </button>
         </div>
