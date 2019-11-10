@@ -9,3 +9,7 @@ logging.basicConfig(level=logging.INFO)
 serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serverSocket.connect((SERVER_IP, SERVER_PORT))
 logging.info("Connected to a server %s:%s", SERVER_IP, SERVER_PORT)
+
+while(True):
+    data = serverSocket.recv(1024)
+    logging.info("Recieved '%s'", data)

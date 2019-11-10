@@ -5,6 +5,8 @@ from flask.views import MethodView
 import socket
 import logging
 import threading
+import signal
+import sys
 
 ELLI_SOCKET_PORT = 5005
 
@@ -19,17 +21,55 @@ class ElliCommunicator(threading.Thread):
         self.port = port
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.bind(("", port))
+        self._stopFlag = False
         threading.Thread.__init__(self)
 
     def run(self):
-        self.socket.listen()
         logging.info("Starting Elli communicator on port %s", self.port)
-        self.elliConn, self.elliAddr = self.socket.accept()
-        logging.info("Elli connected!")
+        while not self._stopFlag:
+            self.socket.settimeout(2)
+            self.socket.listen(1)
+            try:
+                self.elliConn, self.elliAddr = self.socket.accept()
+                logging.info("Elli connected!")
+                return
+            except socket.timeout:
+                pass
+        self.cleanup()
+
+    def cleanup(self):
+        logging.info("Cleaning up sockets")
+        if (hasattr(self, "elliConn")):
+            self.elliConn.close()
+        self.socket.close()
+
+    def send(self, msg):
+        if (hasattr(self, "elliConn")):
+            self.elliConn.sendall(b'dada')
+        else:
+            logging.error("No open connection")
+
+    def stop(self):
+        self._stopFlag = True
 
 
 elliCommunicator = ElliCommunicator(ELLI_SOCKET_PORT)
 elliCommunicator.start()
+
+
+def sigint_handler(sig, frame):
+    elliCommunicator.send("test")
+    logging.info("Shutting down!!")
+    if (elliCommunicator.isAlive()):
+        elliCommunicator.stop()
+        elliCommunicator.join()
+    else:
+        elliCommunicator.cleanup()
+    logging.info("Communciator down.")
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, sigint_handler)
 
 
 class WebView(MethodView):
@@ -57,6 +97,7 @@ class StatusView(MethodView):
 class InstructionView(MethodView):
     def post(self):
         logging.info("Instruction request recieved '%s'", request.json)
+
         return "OK"
 
 
