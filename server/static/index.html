@@ -8,14 +8,13 @@
     <script>
         const serverIP = "192.168.0.102"
 
-
         function queryStatus() {
             var http = new XMLHttpRequest();
             http.onreadystatechange = () => {
                 if (http.readyState === XMLHttpRequest.DONE) {
                     const response = JSON.parse(http.responseText)
-                    if (status === "OK") {
-                        alert("Heureka")
+                    if (response.status === "OK") {
+                        connected(response.addr[0])
                     } else {
                         setTimeout(queryStatus, 1000)
                     }
@@ -24,6 +23,16 @@
             const endpoint = "http://" + serverIP + ":5000/status"
             http.open("GET", endpoint, true);
             http.send();
+        }
+
+        function connected(addr) {
+            var statusTextEl = document.getElementsByClassName("status-text")[0];
+            statusTextEl.innerHTML = "Connected! - " + addr;
+            statusTextEl.style.fontWeight = "bold";
+
+            var ledEl = document.getElementsByClassName("led")[0];
+            ledEl.classList.remove('led-yellow');
+            ledEl.classList.add('led-green');
         }
 
         window.onload = () => {
@@ -56,10 +65,12 @@
             border: 1px solid #b4afaf;
             border-radius: 20px;
             padding: 1rem;
+            width: 20rem;
         }
 
         .status-container {
             display: flex;
+            justify-content: space-between;
         }
 
         .status-text {

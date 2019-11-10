@@ -24,8 +24,8 @@ class ElliCommunicator(threading.Thread):
     def run(self):
         self.socket.listen()
         logging.info("Starting Elli communicator on port %s", self.port)
-        elliConn, elliAddr = self.socket.accept()
-        print(elliConn, elliAddr)
+        self.elliConn, self.elliAddr = self.socket.accept()
+        logging.info("Elli connected!")
 
 
 elliCommunicator = ElliCommunicator(ELLI_SOCKET_PORT)
@@ -39,9 +39,19 @@ class WebView(MethodView):
 
 class StatusView(MethodView):
     def get(self):
-        return {
-            "status": "NOT_CONNECTED"
-        }
+        response = {}
+        isConnected = hasattr(elliCommunicator, "elliAddr")
+        logging.info("Checking if addr is set already: %s", isConnected)
+        if (isConnected and elliCommunicator.elliAddr):
+            response = {
+                "status": "OK",
+                "addr": elliCommunicator.elliAddr
+            }
+        else:
+            response = {
+                "status": "NOT_CONNECTED"
+            }
+        return response
 
 
 app.add_url_rule('/', view_func=WebView.as_view("web"))
