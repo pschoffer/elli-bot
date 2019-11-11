@@ -7,6 +7,7 @@ import logging
 import threading
 import signal
 import sys
+import json
 
 ELLI_SOCKET_PORT = 5005
 
@@ -45,7 +46,8 @@ class ElliCommunicator(threading.Thread):
 
     def send(self, msg):
         if (hasattr(self, "elliConn")):
-            self.elliConn.sendall(b'dada')
+            encodedData = bytearray(json.dumps(msg), "utf-8")
+            self.elliConn.sendall(encodedData)
         else:
             logging.error("No open connection")
 
@@ -58,7 +60,6 @@ elliCommunicator.start()
 
 
 def sigint_handler(sig, frame):
-    elliCommunicator.send("test")
     logging.info("Shutting down!!")
     if (elliCommunicator.isAlive()):
         elliCommunicator.stop()
@@ -97,7 +98,7 @@ class StatusView(MethodView):
 class InstructionView(MethodView):
     def post(self):
         logging.info("Instruction request recieved '%s'", request.json)
-
+        elliCommunicator.send(request.json)
         return "OK"
 
 

@@ -1,6 +1,7 @@
 import socket
 import logging
 import time
+import json
 
 SERVER_IP = "192.168.0.102"
 SERVER_PORT = 5005
@@ -28,6 +29,9 @@ class Communicator:
             data = self.serverSocket.recv(1024)
             if data:
                 logging.info("Got data: %s", data)
+                instruction = json.loads(data.decode("utf-8"))
+                direction = instruction["direction"]
+                logging.info("Decoded to: %s", direction)
             else:
                 eofRecieved = True
                 logging.info("Reached end of connection.")
