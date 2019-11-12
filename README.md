@@ -5,7 +5,7 @@ Elli is a simple car like platform capable to move based on the instructions rec
 Here is a diagram of sommunication flow:
 
 <p align="center">
-  <img src="./assets/connections.png"/>
+  <img src="./assets/control.png"/>
 </p>
 
 ## Server
