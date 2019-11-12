@@ -2,7 +2,7 @@
 
 Elli is a simple car like platform capable to move based on the instructions recieved over the internet.
 
-Here is a diagram of how connection is established:
+Here is a diagram of sommunication flow:
 
 <p align="center">
   <img src="./assets/connections.png"/>
