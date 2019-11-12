@@ -37,3 +37,11 @@ This code should run on the raspberry PI on the bot.
 ### Important value
 
 On top of the [main file](./elli/elli.py) there is a server IP address that should match the real address.
+
+### Hardware
+
+Following diagram ilustrates parts connections.
+
+<p align="center">
+  <img src="./assets/breadboard.png"/>
+</p>
