@@ -38,6 +38,39 @@ This code should run on the raspberry PI on the bot.
 
 On top of the [main file](./elli/elli.py) there is a server IP address that should match the real address.
 
+### Setup
+
+We need to setup the code to run on the startup of the Raspberry Pi. One of the ways of doing it is to create and enable `systemd` unit.
+
+To define a unit we need to create a file:
+
+```bash
+sudo nano /lib/systemd/system/elli.service
+```
+
+And put following content:
+
+```
+[Unit]
+Description=Elli bot control
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python3 /home/pi/elli.py
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Finally we need to enable the task to start on boot `(1)`, optionally start right away `(2)` and list logs `(3)`:
+
+```bash
+sudo systemctl enable elli # (1)
+sudo systemctl start elli # (2)
+journalctl -fu elli # (3)
+```
+
 ### Hardware
 
 Following diagram ilustrates parts connections.
@@ -45,3 +78,4 @@ Following diagram ilustrates parts connections.
 <p align="center">
   <img src="./assets/breadboard.png"/>
 </p>
+```
