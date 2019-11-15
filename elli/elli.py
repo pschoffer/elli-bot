@@ -2,7 +2,8 @@ import socket
 import logging
 import time
 import json
-from gpiozero import LED
+from subprocess import call
+from gpiozero import LED, Button
 
 SERVER_IP = "192.168.0.102"
 SERVER_PORT = 5005
@@ -10,6 +11,7 @@ SERVER_PORT = 5005
 logging.basicConfig(level=logging.INFO)
 
 statusLed = LED(24)
+killButton = Button(21)
 
 
 class Communicator:
@@ -43,6 +45,14 @@ class Communicator:
         logging.info("Cleaning up socket")
         self.serverSocket.close()
 
+
+def shutdown():
+    logging.info("Shutting Down!!")
+    statusLed.blink(0.1, 0.1)
+    call("sudo shutdown -h now", shell=True)
+
+
+killButton.when_pressed = shutdown
 
 communicator = Communicator()
 while True:
