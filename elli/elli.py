@@ -2,11 +2,14 @@ import socket
 import logging
 import time
 import json
+from gpiozero import LED
 
 SERVER_IP = "192.168.0.102"
 SERVER_PORT = 5005
 
 logging.basicConfig(level=logging.INFO)
+
+statusLed = LED(24)
 
 
 class Communicator:
@@ -43,6 +46,8 @@ class Communicator:
 
 communicator = Communicator()
 while True:
+    statusLed.blink(0.5, 0.5)
     communicator.connect()
+    statusLed.on()
     communicator.listen()
     communicator.cleanup()
