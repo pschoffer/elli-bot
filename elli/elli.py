@@ -44,6 +44,7 @@ class Communicator:
             if data:
                 logging.info("Got data: %s", data)
                 instruction = json.loads(data.decode("utf-8"))
+                logging.info("Parsed %s", instruction)
                 direction = instruction["direction"]
                 motionController.setInstruction(direction)
             else:
