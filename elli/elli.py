@@ -43,11 +43,14 @@ class Communicator:
         while not eofRecieved:
             data = self.serverSocket.recv(1024)
             if data:
-                logging.info("Got data: %s", data)
-                instruction = json.loads(data.decode("utf-8"))
-                logging.info("Parsed %s", instruction)
-                direction = instruction["direction"]
-                motionController.setInstruction(direction)
+                try:
+                    logging.info("Got data: %s", data)
+                    instruction = json.loads(data.decode("utf-8"))
+                    logging.info("Parsed %s", instruction)
+                    direction = instruction["direction"]
+                    motionController.setInstruction(direction)
+                except json.decoder.JSONDecodeError:
+                    logging.info("Malformated source '%s'", data)
             else:
                 eofRecieved = True
                 logging.info("Reached end of connection.")

@@ -7,6 +7,7 @@
     <title>Elli Server</title>
     <script>
         const serverIP = "192.168.0.102"
+        const instructionSendIntervalMilis = 500
 
         function getRequestEndpoint(type) {
             return "http://" + serverIP + ":5000/" + type
@@ -55,13 +56,11 @@
                 let data = JSON.stringify({
                     "direction": direction
                 })
-                console.log("Sending instruction: " + data)
-
                 var xhr = new XMLHttpRequest();
                 xhr.open("POST", getRequestEndpoint("instruction"), true);
                 xhr.setRequestHeader('Content-Type', 'application/json');
                 xhr.send(data);
-                setTimeout(sendInstruction, 2000)
+                setTimeout(sendInstruction, instructionSendIntervalMilis)
             }
         }
 
@@ -72,6 +71,10 @@
 
         function onArrowDown(event) {
             let id = getArrowId(event);
+            onNamedArrowDown(id);
+        }
+
+        function onNamedArrowDown(id) {
             window.currentArrow = id;
 
             sendInstruction();
@@ -121,9 +124,33 @@
             document.addEventListener("touchend", onArrowUp)
         }
 
+        function setKeyboardHooks() {
+            document.onkeydown = (e) => {
+                switch(e.key) {
+                    case "ArrowUp":
+                        onNamedArrowDown("up-arrow");
+                        break;
+                    case "ArrowDown":
+                        onNamedArrowDown("down-arrow");
+                        break;
+                    case "ArrowLeft":
+                        onNamedArrowDown("left-arrow");
+                        break;
+                    case "ArrowRight":
+                        onNamedArrowDown("right-arrow");
+                        break;
+                }
+            }
+
+            document.onkeyup = (e) => {
+                onArrowUp(e);
+            }
+        }
+
         window.onload = () => {
             queryStatus()
             setArrowHooks()
+            setKeyboardHooks()
         }
     </script>
     <style>
