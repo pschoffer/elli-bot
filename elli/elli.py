@@ -2,13 +2,14 @@ import socket
 import logging
 import time
 import json
+import threading
 from subprocess import call
 from datetime import datetime
 from gpiozero import LED, Button, Motor
 
 SERVER_IP = "192.168.0.102"
 SERVER_PORT = 5005
-MOTION_STOP_MICROS = 2000
+MOTION_STOP_SECS = 1.5
 
 logging.basicConfig(level=logging.INFO)
 
@@ -21,6 +22,7 @@ motorRight = Motor(16, 20)
 class Communicator:
     def __init__(self, motionController):
         self.motionController = motionController
+        self.motionController.start()
 
     def connect(self):
         self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -60,7 +62,7 @@ def shutdown():
 killButton.when_pressed = shutdown
 
 
-class MotionController:
+class MotionController(threading.Thread):
     _opositeDirections = frozenset([
         frozenset(["straight", "back"]),
         frozenset(["left", "right"])
@@ -70,16 +72,49 @@ class MotionController:
         self.motorLeft = motorLeft
         self.motorRight = motorRight
         self._setInstructionTime()
-        self.currentInstruction = None
+        self.lastInstruction = None
         self.nextInstruction = None
-        
+
+        self._stopFlag = False
+        threading.Thread.__init__(self)
+
+    def run(self):
+        logging.info("Starting motion controller")
+        while not self._stopFlag:
+            self._updateInstructionTimeOut()
+            self._updateMotors()
+            time.sleep(0.1)
+    
+    def _updateMotors(self):
+        if self.nextInstruction is None:
+            self._stop()
+        elif self.nextInstruction == "straight":
+            self._forward()
+        elif self.nextInstruction == "back":
+            self._backward()
+        elif self.nextInstruction == "left":
+            self._left()
+        elif self.nextInstruction == "right":
+            self._right()
+
+    def _updateInstructionTimeOut(self):
+        if self.nextInstruction is not None:
+            timeDiff = (datetime.now() - self.lastInstructionTime).total_seconds()
+            if (timeDiff > MOTION_STOP_SECS):
+                logging.info("Stopping controller due to timeout!")
+                self.nextInstruction = None
+
     def setInstruction(self, instruction):
         isOposite = self.isOpositeToCurrentInstruction(instruction)
-        logging.info("Setting operation %s [oposite: %s]", instruction, isOposite)
-        self.currentInstruction = instruction
+        finalInstruction = None if isOposite else instruction
+        logging.info("Setting operation %s [oposite: %s] => %s", instruction, isOposite, finalInstruction)
+        
+        self._setInstructionTime()
+        self.lastInstruction = self.nextInstruction
+        self.nextInstruction = finalInstruction
 
     def isOpositeToCurrentInstruction(self, instruction):
-        thisCombination = frozenset([self.currentInstruction, instruction])
+        thisCombination = frozenset([self.lastInstruction, instruction])
         return thisCombination in MotionController._opositeDirections
 
     def _setInstructionTime(self):
@@ -88,12 +123,24 @@ class MotionController:
     def _forward(self):
         self.motorLeft.forward()
         self.motorRight.forward()
-        self._setInstructionTime()
 
     def _backward(self):
         self.motorLeft.backward()
         self.motorRight.backward()
-        self._setInstructionTime()
+
+
+    def _left(self):
+        self.motorLeft.backward()
+        self.motorRight.forward()
+
+    def _right(self):
+        self.motorLeft.forward()
+        self.motorRight.backward()
+
+
+    def _stop(self):
+        self.motorLeft.stop()
+        self.motorRight.stop()
 
 
 motionController = MotionController(motorLeft, motorRight)
