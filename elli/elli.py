@@ -9,7 +9,8 @@ from gpiozero import LED, Button, Motor
 
 SERVER_IP = "192.168.0.102"
 SERVER_PORT = 5005
-MOTION_STOP_SECS = 1.5
+MOTION_STOP_SECS = 0.8
+MOTION_CHANGE_INTERVAL = 0.05
 
 logging.basicConfig(level=logging.INFO)
 
@@ -84,7 +85,7 @@ class MotionController(threading.Thread):
         while not self._stopFlag:
             self._updateInstructionTimeOut()
             self._updateMotors()
-            time.sleep(0.1)
+            time.sleep(MOTION_CHANGE_INTERVAL)
     
     def _updateMotors(self):
         if self.nextInstruction is None:
