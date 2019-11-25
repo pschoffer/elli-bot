@@ -73,9 +73,13 @@ journalctl -fu elli # (3)
 
 ### Hardware
 
+
+<p align="center">
+  <img src="./assets/ellibot.jpg"/>
+</p>
+
 Following diagram ilustrates parts connections.
 
 <p align="center">
   <img src="./assets/breadboard.png"/>
 </p>
-```
