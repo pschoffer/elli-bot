@@ -1,6 +1,6 @@
 FROM python:3-alpine
 EXPOSE 5000
-EXPOSE 5001
+EXPOSE 5005
 
 WORKDIR /usr/src/app
 
