@@ -4,6 +4,7 @@ EXPOSE 5001
 
 WORKDIR /usr/src/app
 
+COPY static ./static
 COPY *.py ./
 
 RUN ["python", "setup.py", "install"]
