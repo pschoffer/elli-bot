@@ -16,6 +16,8 @@ The server serves several roles:
 - Rest Endpoint - rest endpoint for the webclient to talk to
 - Socket Endpoint - for the bot to connect to
 
+The main reason there is a server and not direct bot-client communication is that this enables to get "around" NAT translation and firwalls from private networks of the bot and client. In this case both bot and client can be in private networks (like your home wifi) and they both get to initialize their respective connection to the public resource - the Server.
+
 ### Important values
 
 In the top of the [index.html](./server/static/index.html) there is hardcoded IP adress of the rest endpoint.
