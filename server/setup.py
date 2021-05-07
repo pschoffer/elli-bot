@@ -8,7 +8,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'flask-cors==3.0.8',
+        'flask-cors==3.0.9',
         'flask',
     ]
 )
